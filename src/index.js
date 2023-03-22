@@ -1,4 +1,4 @@
-import templateFunction from './template.hbs';
+import templateFunction from './templates/template.hbs';
 const axios = require('axios').default;
 import Notiflix from 'notiflix';
 
