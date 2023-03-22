@@ -6,10 +6,10 @@ export function fetchGalery(options) {
   return axios
     .get(BASE_URL, options)
     .then(function (response) {
-      console.log(response);
+      
+      // console.log(response);
       return response;
     })
-
     .catch(function (error) {
       console.log(error);
     })
