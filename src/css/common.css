@@ -27,6 +27,8 @@ ol {
   padding-left: 0;
 }
 
+
+
 .list {
   list-style: none;
 }
@@ -41,4 +43,5 @@ ol {
   padding-right: 15px;
   margin-left: auto;
   margin-right: auto;
+  
 }

@@ -2,13 +2,15 @@ const axios = require('axios').default;
 
 const BASE_URL = 'https://pixabay.com/api/';
 
-export function fetchGalery(options) {
+export function fetchGallery(options) {
   return axios
     .get(BASE_URL, options)
-    .then(function (response) {
-      
-      // console.log(response);
-      return response;
+    .then(function (res) {
+      // if (!res.ok) {
+      //   throw new Error(res.status);
+      // }
+       console.log(res);
+      return res;
     })
     .catch(function (error) {
       console.log(error);
