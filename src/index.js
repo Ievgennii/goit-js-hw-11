@@ -1,13 +1,9 @@
 import templateFunction from './templates/template.hbs';
-// const axios = require('axios').default;
 import Notiflix from 'notiflix';
 import { fetchGallery } from './gallery-api';
-// Описан в документации
 import SimpleLightbox from 'simplelightbox';
-// Дополнительный импорт стилей
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-// document.body.innerHTML = templateFunction();
 const galeryFormEl = document.querySelector('#search-form');
 const galleryListEl = document.querySelector('.gallery');
 const loadMoreBtnEl = document.querySelector('.load-more');
@@ -23,40 +19,37 @@ let options = {
     orientation: 'horizontal',
     safesearch: true,
     per_page: 40,
-    page: 1,
+    page: 0,
   },
 };
 
 function handleSearchGallery(event) {
   event.preventDefault();
   options.params.q = event.target.elements.searchQuery.value.trim();
-  console.log(options.params.q);
-  // console.log(options);
+  options.params.page = 1;
+  galleryListEl.innerHTML = '';
+
   fetchGallery(options)
     .then(function ({ data }) {
-      // console.log(data.data);
-      // console.log(data.data.hits);
-      // console.log(data.data.hits[0].webformatURL);
       if (!data.hits.length) {
         throw new Error();
       }
-      addImagesGallery(data);
-      if (data.totalHits === options.params.page) {
-        return;
-      }
-      loadMoreBtnEl.classList.remove('is-hidden');
+      Notiflix.Notify.info(`Hooray! We found ${data.totalHits} images.`);
 
-      // let gallery = new SimpleLightbox('.gallery a', { captionDelay: 250 });
-      // gallery.on('show.simplelightbox');
-      // new SimpleLightbox('.gallery a', { captionDelay: 250 });
-      galeryFormEl.reset()
+      addImagesGallery(data);
+
+      loadMoreBtnEl.classList.remove('is-hidden');
+      // galeryFormEl.reset();
+      // smoothScroll()
     })
     .catch(() => {
       loadMoreBtnEl.classList.add('is-hidden');
       Notiflix.Notify.info(
         'Sorry, there are no images matching your search query. Please try again.'
       );
-      galeryFormEl.reset()
+    })
+    .finally(() => {
+      galeryFormEl.reset();
     });
 }
 
@@ -70,6 +63,7 @@ function handleLoadMoreBtnClick() {
   fetchGallery(options)
     .then(function ({ data }) {
       addImagesGallery(data);
+      smoothScroll();
     })
     .catch(() => {
       loadMoreBtnEl.classList.add('is-hidden');
@@ -82,8 +76,18 @@ function handleLoadMoreBtnClick() {
 
 function addImagesGallery(data) {
   const addImagesGalery = createImagesGallery(data.hits);
-  galleryListEl.innerHTML = addImagesGalery;
-
+  galleryListEl.insertAdjacentHTML('beforeend', addImagesGalery);
   let gallery = new SimpleLightbox('.gallery a', { captionDelay: 250 });
-      gallery.on('show.simplelightbox');
+  gallery.on('show.simplelightbox');
+}
+
+function smoothScroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 1,
+    behavior: 'smooth',
+  });
 }
