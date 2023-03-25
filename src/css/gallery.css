@@ -35,7 +35,7 @@
 .gallery {
   display: grid;
   max-width: 1200px;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* три равных столбца */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* три равных столбца */
   grid-gap: 12px;
   justify-content: center;
   margin-left: auto;
@@ -52,7 +52,7 @@
 
 
 .gallery__image {
-  max-width: 180px;
+  max-width: 200px;
   /* height: 100%;
   width: 100%; */
   object-fit: cover;

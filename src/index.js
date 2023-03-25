@@ -3,6 +3,7 @@ import Notiflix from 'notiflix';
 import { fetchGallery } from './gallery-api';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import options from './options';
 
 const galeryFormEl = document.querySelector('#search-form');
 const galleryListEl = document.querySelector('.gallery');
@@ -13,23 +14,22 @@ galeryFormEl.addEventListener('submit', handleSearchGallery);
 loadMoreBtnEl.addEventListener('click', handleLoadMoreBtnClick);
 clearAllBtnEl.addEventListener('click', clearAll);
 
-let options = {
-  params: {
-    key: '34611977-1c6ac37fcf885911789ad5cb9',
-    q: null,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true,
-    per_page: 40,
-    page: 0,
-  },
-};
+
 
 function handleSearchGallery(event) {
-  event.preventDefault();
+  
+  event.preventDefault();  
+
   options.params.q = event.target.elements.searchQuery.value.trim();
   options.params.page = 1;
   galleryListEl.innerHTML = '';
+console.log(options.params.q.length)
+  if (options.params.q.length === 0 ) {
+    Notiflix.Notify.info(`you need to enter a word to search for a photo`);
+    return;
+  }
+  
+
   clearAllBtnEl.classList.add('is-hidden');
   loadMoreBtnEl.classList.add('is-hidden');
 
@@ -44,8 +44,7 @@ function handleSearchGallery(event) {
 if (data.totalHits > options.params.per_page) {
       loadMoreBtnEl.classList.remove('is-hidden');
     } else {clearAllBtnEl.classList.remove('is-hidden');}
-      // galeryFormEl.reset();
-      // smoothScroll()
+      
     })
     .catch(() => {
       loadMoreBtnEl.classList.add('is-hidden');
@@ -65,7 +64,7 @@ function createImagesGallery(items) {
 
 function handleLoadMoreBtnClick() {
   options.params.page += 1;
-  console.log(options.params.page);
+  // console.log(options.params.page);
   fetchGallery(options)
     .then(function ({ data }) {
       addImagesGallery(data);
@@ -105,3 +104,4 @@ function smoothScroll() {
     behavior: 'smooth',
   });
 }
+
