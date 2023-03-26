@@ -7,15 +7,17 @@ import options from './js/options';
 
 const galeryFormEl = document.querySelector('#search-form');
 const galleryListEl = document.querySelector('.gallery');
-const loadMoreBtnEl = document.querySelector('.load-more');
+const loadMoreBtnEl = document.querySelector('.load');
 const clearAllBtnEl = document.querySelector('.clear-all');
 
 galeryFormEl.addEventListener('submit', handleSearchGallery);
-loadMoreBtnEl.addEventListener('click', handleLoadMoreBtnClick);
+// loadMoreBtnEl.addEventListener('click', handleLoadMoreBtnClick);
 clearAllBtnEl.addEventListener('click', clearAll);
+window.addEventListener('scroll', endlessScroll);
 
 async function handleSearchGallery(event) {
   try {
+    window.addEventListener('scroll', endlessScroll);
     event.preventDefault();
     options.params.q = event.target.elements.searchQuery.value.trim();
     options.params.page = 1;
@@ -45,26 +47,7 @@ function createImagesGallery(items) {
   return items.map(item => templateFunction(item)).join('');
 }
 
-async function handleLoadMoreBtnClick() {
-  try {
-    options.params.page += 1;
-    const { data } = await fetchGallery(options);
-    console.log(data.hits.length);
-    if (!data.hits.length) {
-      throw new Error();
-    }
-    addImagesGallery(data);
-    smoothScroll();
-  } catch (error) {
-    loadMoreBtnEl.classList.add('is-hidden');
-    clearAllBtnEl.classList.remove('is-hidden');
-    Notiflix.Notify.info(
-      "We're sorry, but you've reached the end of search results."
-    );
-    options.params.page = 1;
-    clearAllBtnEl.classList.remove('is-hidden');
-  }
-}
+
 
 function addImagesGallery(data) {
   const addImagesGalery = createImagesGallery(data.hits);
@@ -94,5 +77,36 @@ function checkBtnClasses(data, options) {
     loadMoreBtnEl.classList.remove('is-hidden');
   } else {
     clearAllBtnEl.classList.remove('is-hidden');
+  }
+}
+
+function endlessScroll() {
+  const documentRect = document.documentElement.getBoundingClientRect();
+  if (documentRect.bottom < document.documentElement.clientHeight + 150){
+    handleLoadMoreScroll()
+  }
+}
+
+async function handleLoadMoreScroll() {
+  try {
+    
+    options.params.page += 1;
+    const { data } = await fetchGallery(options);
+    console.log(data.hits.length);
+    if (!data.hits.length) {
+      throw new Error();
+    }
+    addImagesGallery(data);
+    smoothScroll();
+  } catch (error) {
+    window.removeEventListener('scroll', endlessScroll);
+    loadMoreBtnEl.classList.add('is-hidden');
+    clearAllBtnEl.classList.remove('is-hidden');
+    Notiflix.Notify.info(
+      "We're sorry, but you've reached the end of search results."
+    );
+    options.params.page = 1;
+    clearAllBtnEl.classList.remove('is-hidden');
+    
   }
 }
