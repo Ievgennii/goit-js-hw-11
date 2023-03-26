@@ -1,4 +1,4 @@
-export default options = {
+export let options = {
   params: {
     key: '34611977-1c6ac37fcf885911789ad5cb9',
     q: null,

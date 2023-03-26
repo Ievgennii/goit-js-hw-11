@@ -3,7 +3,7 @@ import Notiflix from 'notiflix';
 import { fetchGallery } from './js/gallery-api';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import options from './js/options';
+import {options} from './js/options';
 
 const galeryFormEl = document.querySelector('#search-form');
 const galleryListEl = document.querySelector('.gallery');
@@ -49,7 +49,7 @@ async function handleLoadMoreBtnClick() {
   try {
     options.params.page += 1;
     const { data } = await fetchGallery(options);
-    console.log(data.hits.length);
+    
     if (!data.hits.length) {
       throw new Error();
     }
