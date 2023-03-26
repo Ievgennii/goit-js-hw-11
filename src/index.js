@@ -20,14 +20,22 @@ async function handleSearchGallery(event) {
     options.params.q = event.target.elements.searchQuery.value.trim();
     options.params.page = 1;
     galleryListEl.innerHTML = '';
-    if (options.params.q.length === 0) {
-      Notiflix.Notify.info('you need to enter a word to search for a photo');
-      return;
-    }
+    // if (options.params.q.length === 0) {
+    //   Notiflix.Notify.info(
+    //     'Sorry, there are no images matching your search query. Please try again.');
+    //   // Notiflix.Notify.info('you need to enter a word to search for a photo');
+    //   return;
+    // }
     clearAllBtnEl.classList.add('is-hidden');
     loadMoreBtnEl.classList.add('is-hidden');
 
     const { data } = await fetchGallery(options);
+    if (data.totalHits === 0 || options.params.q.length === 0) {
+      Notiflix.Notify.info(
+        'Sorry, there are no images matching your search query. Please try again.');
+      // Notiflix.Notify.info('you need to enter a word to search for a photo');
+      return;
+    }
     Notiflix.Notify.info(`Hooray! We found ${data.totalHits} images.`);
     addImagesGallery(data);
     checkBtnClasses(data, options);

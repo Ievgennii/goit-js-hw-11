@@ -10,6 +10,7 @@ const galleryListEl = document.querySelector('.gallery');
 const loadMoreBtnEl = document.querySelector('.load');
 const clearAllBtnEl = document.querySelector('.clear-all');
 
+
 galeryFormEl.addEventListener('submit', handleSearchGallery);
 
 clearAllBtnEl.addEventListener('click', clearAll);
@@ -22,16 +23,20 @@ async function handleSearchGallery(event) {
     options.params.q = event.target.elements.searchQuery.value.trim();
     options.params.page = 1;
     galleryListEl.innerHTML = '';
-    if (options.params.q.length === 0) {
-      Notiflix.Notify.info('you need to enter a word to search for a photo');
-      return;
-    }
+    
     clearAllBtnEl.classList.add('is-hidden');
     loadMoreBtnEl.classList.add('is-hidden');
 
     const { data } = await fetchGallery(options);
+    if (data.totalHits === 0 || options.params.q.length === 0) {
+      console.log(data.totalHits)
+      Notiflix.Notify.info('Sorry, there are no images matching your search query. Please try again.');
+      return;
+    }
     Notiflix.Notify.info(`Hooray! We found ${data.totalHits} images.`);
+    
     addImagesGallery(data);
+    
     checkBtnClasses(data, options);
   } catch (error) {
     loadMoreBtnEl.classList.add('is-hidden');
@@ -67,7 +72,7 @@ function smoothScroll() {
     .firstElementChild.getBoundingClientRect();
 
   window.scrollBy({
-    top: cardHeight * 1.5,
+    top: cardHeight * 2,
     behavior: 'smooth',
   });
 }
@@ -85,6 +90,7 @@ function endlessScroll() {
   if (documentRect.bottom < document.documentElement.clientHeight + 150){
     handleLoadMoreScroll()
   }
+  // handleLoadMoreScroll()
 }
 
 async function handleLoadMoreScroll() {
@@ -95,6 +101,7 @@ async function handleLoadMoreScroll() {
       throw new Error();
     }
     addImagesGallery(data);
+    // gallery.refresh('show.simplelightbox');
     smoothScroll();
   } catch (error) {
     window.removeEventListener('scroll', endlessScroll);
